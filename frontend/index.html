@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Job Application OS</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 1100px; margin: 30px auto; padding: 0 20px; background:#f6f7f9; color:#1f2937; }
+    h1 { margin-bottom: 4px; }
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+    .card { background:white; border:1px solid #ddd; border-radius:12px; padding:18px; margin-bottom:20px; }
+    textarea, input { width:100%; box-sizing:border-box; padding:12px; margin:8px 0; border:1px solid #bbb; border-radius:8px; }
+    textarea { min-height:260px; }
+    button { padding:11px 16px; border:0; border-radius:8px; cursor:pointer; background:#111827; color:white; margin:5px 8px 5px 0; }
+    button.secondary { background:#4b5563; }
+    pre { white-space:pre-wrap; word-wrap:break-word; background:#f3f4f6; padding:12px; border-radius:8px; }
+    .score { font-size:36px; font-weight:bold; }
+    .status { padding:10px; border-radius:8px; background:#eef2ff; margin-top:10px; }
+    @media(max-width: 800px) { .grid { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <h1>AI Job Application OS</h1>
+  <p>Upload a CV, analyze a job against that CV, generate a cover letter, and save the application after human review.</p>
+
+  <div class="card">
+    <h2>1. Candidate CV</h2>
+    <input id="cvFile" type="file" accept="application/pdf,.pdf" />
+    <button onclick="uploadCV()">Upload & Parse CV</button>
+    <button class="secondary" onclick="loadCandidate()">Show Current Candidate</button>
+    <button class="secondary" onclick="clearCV()">Clear Uploaded CV</button>
+    <div id="cvStatus" class="status">No CV uploaded in this browser session yet. The server will use the default CV/profile if available.</div>
+    <pre id="candidate">Candidate profile not loaded yet.</pre>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>2. Job Description</h2>
+      <textarea id="job" placeholder="Paste a complete job description here..."></textarea>
+      <button onclick="analyze()">Analyze Job</button>
+      <button onclick="cover()">Generate Cover Letter</button>
+    </div>
+
+    <div class="card">
+      <h2>3. Analysis</h2>
+      <div id="score" class="score">-</div>
+      <pre id="analysis">No analysis yet.</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>4. Cover Letter</h2>
+    <pre id="letter">No cover letter yet.</pre>
+  </div>
+
+  <div class="card">
+    <h2>5. Human Approval & Save</h2>
+    <input id="company" placeholder="Company" />
+    <input id="role" placeholder="Role" />
+    <button onclick="save()">Approve & Save Application</button>
+    <pre id="saveResult"></pre>
+  </div>
+
+<script>
+let latestScore = 0;
+
+async function uploadCV() {
+  const input = document.getElementById('cvFile');
+  if (!input.files.length) {
+    alert('Choose a PDF CV first.');
+    return;
+  }
+  const form = new FormData();
+  form.append('file', input.files[0]);
+  const res = await fetch('/upload-cv', { method:'POST', body:form });
+  const data = await res.json();
+  if (!res.ok) {
+    document.getElementById('cvStatus').textContent = data.detail || 'CV upload failed.';
+    return;
+  }
+  document.getElementById('cvStatus').textContent = `Using uploaded CV: ${data.filename}`;
+  document.getElementById('candidate').textContent = JSON.stringify(data.candidate, null, 2);
+}
+
+async function loadCandidate() {
+  const res = await fetch('/candidate');
+  const data = await res.json();
+  document.getElementById('candidate').textContent = JSON.stringify(data, null, 2);
+}
+
+async function clearCV() {
+  const res = await fetch('/upload-cv', { method:'DELETE' });
+  const data = await res.json();
+  document.getElementById('cvStatus').textContent = data.message;
+  await loadCandidate();
+}
+
+async function analyze() {
+  const job = document.getElementById('job').value.trim();
+  if (job.length < 40) {
+    alert('Please provide a fuller job description (minimum 40 characters).');
+    return;
+  }
+
+  const res = await fetch('/analyze-job', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({job_description:job})
+  });
+
+  const data = await res.json();
+  if (!res.ok) {
+    document.getElementById('analysis').textContent = JSON.stringify(data, null, 2);
+    return;
+  }
+
+  latestScore = data.match_score;
+  document.getElementById('score').textContent = data.match_score + '% — ' + data.recommendation;
+  document.getElementById('analysis').textContent = JSON.stringify(data, null, 2);
+  document.getElementById('company').value = data.parsed_job.company || '';
+  document.getElementById('role').value = data.parsed_job.title || '';
+}
+
+async function cover() {
+  const job = document.getElementById('job').value.trim();
+  if (job.length < 40) {
+    alert('Please provide a fuller job description first.');
+    return;
+  }
+
+  const res = await fetch('/generate-cover-letter', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({job_description:job, tone:'professional'})
+  });
+
+  const data = await res.json();
+  document.getElementById('letter').textContent = data.cover_letter || JSON.stringify(data, null, 2);
+}
+
+async function save() {
+  const company = document.getElementById('company').value.trim();
+  const role = document.getElementById('role').value.trim();
+
+  if (!company || !role) {
+    alert('Add company and role before saving.');
+    return;
+  }
+
+  const res = await fetch('/applications', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      company,
+      role,
+      match_score:latestScore,
+      status:'Approved by user'
+    })
+  });
+
+  const data = await res.json();
+  document.getElementById('saveResult').textContent = JSON.stringify(data, null, 2);
+}
+
+loadCandidate();
+</script>
+</body>
+</html>

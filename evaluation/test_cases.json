@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Python backend strong match",
+    "job_description": "Role: Backend Engineer\\nWe need Python, FastAPI, Docker, PostgreSQL and AWS. Minimum 5 years experience. English required.",
+    "expected_recommendation": "Apply"
+  },
+  {
+    "name": "AI engineer partial match",
+    "job_description": "Role: AI Engineer\\nRequired: Python, FastAPI, LLM, RAG, Docker, AWS. Minimum 4 years experience.",
+    "expected_recommendation": "Maybe Apply"
+  },
+  {
+    "name": "Frontend role",
+    "job_description": "Role: Frontend Developer\\nRequired skills: React, TypeScript, JavaScript, CSS, Next.js.",
+    "expected_recommendation": "Maybe Apply"
+  },
+  {
+    "name": "Java role",
+    "job_description": "Role: Java Backend Engineer\\nRequired: Java, Spring Boot, Kubernetes, Kafka, Terraform. 5 years experience.",
+    "expected_recommendation": "Low Match"
+  },
+  {
+    "name": "QA automation role",
+    "job_description": "Role: QA Automation Engineer\\nRequired: Playwright, Selenium, Cypress, Python, JavaScript, CI/CD.",
+    "expected_recommendation": "Apply"
+  },
+  {
+    "name": "Data engineer",
+    "job_description": "Role: Data Engineer\\nRequired: Python, SQL, PostgreSQL, AWS, Kafka, Airflow.",
+    "expected_recommendation": "Maybe Apply"
+  },
+  {
+    "name": "DevOps role",
+    "job_description": "Role: DevOps Engineer\\nRequired: Docker, Kubernetes, AWS, Terraform, Jenkins, Linux.",
+    "expected_recommendation": "Maybe Apply"
+  },
+  {
+    "name": "Experience gap",
+    "job_description": "Role: Principal Engineer\\nRequired: Python, FastAPI, AWS, Docker. Minimum 12 years experience.",
+    "expected_recommendation": "Maybe Apply"
+  },
+  {
+    "name": "German language warning",
+    "job_description": "Role: Backend Engineer\\nRequired: Python, FastAPI, Docker, PostgreSQL. German required.",
+    "expected_recommendation": "Apply"
+  },
+  {
+    "name": "Mixed software role",
+    "job_description": "Role: Software Engineer\\nRequired: TypeScript, Node.js, React, PostgreSQL, Docker, REST API.",
+    "expected_recommendation": "Apply"
+  }
+]
