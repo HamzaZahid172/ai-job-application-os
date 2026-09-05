@@ -3,6 +3,10 @@
 
 A local-first AI-assisted application that reads a candidate CV, analyzes a job description, calculates an explainable match score, identifies skill gaps, generates a tailored cover letter, and stores approved applications.
 
+## Demo Video
+
+[Watch the AI Job Application OS demo on YouTube](https://youtu.be/QiObEz8mIns)
+
 ## What this project demonstrates
 
 - PDF CV parsing
