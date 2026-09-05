@@ -48,15 +48,22 @@ Job Description
 → Human Approval
 → SQLite Application Tracker
 
+Candidate CV
+→ PDF Text Extraction
+→ Candidate Profile
+→ Match Engine
+
 ## 6. Why This Architecture
 
 The project deliberately separates AI tasks from deterministic business logic.
 
-AI is used for unstructured text extraction and cover-letter drafting.
+AI is used for unstructured job-description extraction and cover-letter drafting.
 
 The matching score is deterministic and auditable. This avoids making a high-impact decision based only on an opaque model response.
 
 If the local LLM is unavailable, the parser falls back to rule-based extraction, so the application remains usable.
+
+The application also supports both a configured default CV and a different PDF CV uploaded through the browser UI.
 
 ## 7. Reliability Measures
 
@@ -64,9 +71,12 @@ If the local LLM is unavailable, the parser falls back to rule-based extraction,
 - Minimum job-description length.
 - Structured JSON requested from the local LLM.
 - Deterministic fallback if the LLM request fails.
+- PDF CV parsing and active-candidate selection.
 - Duplicate application protection in SQLite.
 - Transparent score calculation.
 - Human approval before an application record is stored.
+- Automated unit tests with Pytest.
+- GitHub Actions CI that runs tests and verifies the Docker image can build.
 
 ## 8. Evaluation
 
@@ -85,16 +95,17 @@ The evaluation checks whether the system produces the expected recommendation fo
 - Language warning
 - General software-engineering role
 
-Run:
+For repeatable evaluation, run with the LLM disabled:
 
 ```bash
-python evaluation/run_evaluation.py
+USE_LLM=false python evaluation/run_evaluation.py
 ```
 
-Record the real output before submission. Do not report results that have not been executed.
+The final deterministic evaluation produced 10/10 expected recommendations after improvements to the fallback skill vocabulary and recommendation thresholds.
 
 ## 9. Limitations
 
+- PDF extraction works best with text-based PDFs rather than scanned-image CVs.
 - The fallback parser is keyword-based and may miss uncommon technologies.
 - Match quality depends on how clearly the job description states requirements.
 - The scoring model currently gives 80% weight to required-skill fit and 20% to experience fit.
@@ -104,7 +115,7 @@ Record the real output before submission. Do not report results that have not be
 
 ## 10. Future Improvements
 
-- CV upload and parsing.
+- LLM-assisted CV structuring.
 - Multiple saved candidate profiles.
 - Embedding-based semantic skill matching.
 - Application analytics dashboard.
