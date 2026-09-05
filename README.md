@@ -1,4 +1,5 @@
 # AI Job Application OS
+[![CI](https://github.com/HamzaZahid172/ai-job-application-os/actions/workflows/ci.yml/badge.svg)](https://github.com/HamzaZahid172/ai-job-application-os/actions/workflows/ci.yml)
 
 A local-first AI-assisted application that reads a candidate CV, analyzes a job description, calculates an explainable match score, identifies skill gaps, generates a tailored cover letter, and stores approved applications.
 
